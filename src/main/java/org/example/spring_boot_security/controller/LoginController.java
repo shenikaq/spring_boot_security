@@ -40,7 +40,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, Model model) {
+    public String registerUser(@ModelAttribute User user) {
 
         if (userService.findByUsername(user.getUsername()).isEmpty()) {
             // Добавляем роль ROLE_USER по умолчанию

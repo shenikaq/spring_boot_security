@@ -16,6 +16,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Primary
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     @Autowired

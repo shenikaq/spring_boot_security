@@ -23,7 +23,7 @@
         <td th:text="${user.email}"></td>
         <td th:text="${user.role}"></td>
         <td>
-            <a th:href="@{/admin/users/{id}(id=${user.id})}">Просмотреть</a>
+            <a th:href="@{/admin/users/info?id={userId}(userId=${user.id})}">Просмотреть</a>
         </td>
     </tr>
     </tbody>

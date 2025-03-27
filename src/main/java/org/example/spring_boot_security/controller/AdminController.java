@@ -5,7 +5,6 @@ import org.example.spring_boot_security.model.User;
 import org.example.spring_boot_security.service.RoleService;
 import org.example.spring_boot_security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +25,9 @@ public class AdminController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public String listUsers(Model model) {
         // Получаем всех пользователей из базы данных
@@ -36,8 +38,8 @@ public class AdminController {
     }
 
     // для просмотра одного пользователя
-    @GetMapping("/users/{id}")
-    public String viewUser(@PathVariable Long id, Model model) {
+    @GetMapping("/users/info")
+    public String viewUser(@RequestParam Long id, Model model) {
         User user = userService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
         model.addAttribute("user", user);
@@ -53,7 +55,7 @@ public class AdminController {
 
     @GetMapping("/save")
     public String save(@RequestParam String userName, @RequestParam String password, @RequestParam String email) {
-        User user = new User(userName, passwordEncoder().encode(password), email);
+        User user = new User(userName, passwordEncoder.encode(password), email);
         // Добавляем роль ROLE_USER по умолчанию
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.findByRole("ROLE_USER").orElseGet(() -> roleService.save(new Role("ROLE_USER"))));
@@ -70,7 +72,4 @@ public class AdminController {
     }
 ////    ?id=2&userName=fn1&email=e1
 
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

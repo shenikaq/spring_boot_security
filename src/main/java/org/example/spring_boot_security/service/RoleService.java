@@ -8,5 +8,5 @@ public interface RoleService {
 
     Optional<Role> findByRole(String name);
     Role save(Role role);
-    boolean existsByRole(String name);
+
 }

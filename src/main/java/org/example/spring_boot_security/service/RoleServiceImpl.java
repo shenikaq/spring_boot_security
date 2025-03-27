@@ -6,12 +6,14 @@ import org.example.spring_boot_security.model.Role;
 import org.example.spring_boot_security.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
+@Transactional(readOnly = true)
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -24,14 +26,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public Role save (Role role) {
         return roleRepository.save(role);
-    }
-
-    // Проверяем существование роли по имени
-    @Override
-    public boolean existsByRole(String name) {
-        return roleRepository.existsByRole(name);
     }
 
 }
