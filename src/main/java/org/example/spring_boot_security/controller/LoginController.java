@@ -4,6 +4,7 @@ import org.example.spring_boot_security.model.Role;
 import org.example.spring_boot_security.model.User;
 import org.example.spring_boot_security.model.UserRegistrationRequest;
 import org.example.spring_boot_security.service.RoleService;
+import org.example.spring_boot_security.service.UserRegisterService;
 import org.example.spring_boot_security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,9 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    UserRegisterService userRegisterService;
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -40,21 +44,8 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) {
-
-        if (userService.findByUsername(user.getUsername()).isEmpty()) {
-            // Добавляем роль ROLE_USER по умолчанию
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleService.findByRole("ROLE_USER").orElseGet(() -> roleService.save(new Role("ROLE_USER"))));
-            user.setRole(roles);
-            // Хеширование пароля
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            // Сохраняем пользователя
-            userService.save(user);
-            return "redirect:/login?registered=true";
-        } else {
-            return "register";
-        }
+    public String registerUserForm (@ModelAttribute User user) {
+        return userRegisterService.registerUser(user);
     }
 
 }

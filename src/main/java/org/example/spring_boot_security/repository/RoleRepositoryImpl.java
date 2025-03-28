@@ -18,20 +18,14 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     @Override
     public Optional<Role> findByRole(String userRole) {
-        String sqlRole = "SELECT " +
-                "r.id as role_id," +
-                "r.role " +
-                "FROM role r " +
-                "WHERE r.role = ?";
-
         try {
-            Role roles = jdbcTemplate.queryForObject(sqlRole, new Object[]{userRole}, (rs, rowNum) -> {
+            Role roles = jdbcTemplate.queryForObject("SELECT r.id as role_id, r.role FROM role r WHERE r.role = ?",
+                                                    new Object[]{userRole}, (rs, rowNum) -> {
                 Role role = new Role();
                 role.setId(rs.getLong("role_id"));
                 role.setRole(rs.getString("role"));
                 return role;
             });
-
             return Optional.of(roles);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -40,11 +34,9 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     @Override
     public Role save(Role role) {
-        String sql = "INSERT INTO role (role.role)"
-                + "VALUES (?)";
 //// Использование SqlParameterValue
         SqlParameterValue roles = new SqlParameterValue(Types.VARCHAR, role.getRole());
-        jdbcTemplate.update(sql, roles);
+        jdbcTemplate.update("INSERT INTO role (role.role) VALUES (?)", roles);
         Role getRole = findByRole(role.getRole()).get();
         return getRole;
     }
